@@ -36,6 +36,7 @@ export default function ChatWindow() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const pdfInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-scroll to bottom when messages change (use instant during streaming to avoid jank)
   useEffect(() => {
@@ -217,24 +218,32 @@ export default function ChatWindow() {
       };
       reader.readAsDataURL(file);
     }
+    // Reset so the same file can be re-selected
+    e.target.value = '';
   };
 
   const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && file.type === 'application/pdf') {
+    if (file && (file.type === 'application/pdf' || file.name.endsWith('.pdf'))) {
       setIsUploadingPdf(true);
       try {
         const data = await chatApi.uploadPdf(file);
         if (data.success && data.text) {
           setAttachedPdf({ name: file.name, text: data.text });
+        } else {
+          alert('Could not extract text from this PDF.');
         }
       } catch (err) {
         console.error('Failed to parse PDF', err);
-        alert('Failed to extract text from PDF.');
+        alert('Failed to upload PDF. Please try again.');
       } finally {
         setIsUploadingPdf(false);
       }
+    } else if (file) {
+      alert('Please select a PDF file.');
     }
+    // Reset so the same file can be re-selected
+    e.target.value = '';
   };
 
   const handleRegenerate = () => {
@@ -542,6 +551,7 @@ export default function ChatWindow() {
             <input 
               type="file" 
               accept="image/*" 
+              capture="environment"
               className="hidden" 
               ref={fileInputRef}
               onChange={handleImageUpload}
@@ -558,13 +568,18 @@ export default function ChatWindow() {
               </svg>
             </button>
 
-            <label className="p-2 text-muted-foreground hover:text-foreground hover:bg-surface rounded-xl transition-colors cursor-pointer" title="Attach PDF">
-              <input 
-                type="file" 
-                accept="application/pdf" 
-                className="hidden" 
-                onChange={handlePdfUpload}
-              />
+            <input 
+              type="file" 
+              accept=".pdf,application/pdf" 
+              className="hidden" 
+              ref={pdfInputRef}
+              onChange={handlePdfUpload}
+            />
+            <button
+              onClick={() => pdfInputRef.current?.click()}
+              className="p-2 text-muted-foreground hover:text-foreground hover:bg-surface rounded-xl transition-colors"
+              title="Attach PDF"
+            >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
@@ -572,7 +587,7 @@ export default function ChatWindow() {
                 <line x1="16" y1="17" x2="8" y2="17" />
                 <polyline points="10 9 9 9 8 9" />
               </svg>
-            </label>
+            </button>
             <textarea
               ref={inputRef}
               value={input}
