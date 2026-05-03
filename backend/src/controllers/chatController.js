@@ -12,7 +12,7 @@ const Chat = require('../models/Chat');
 const Message = require('../models/Message');
 const User = require('../models/User');
 const { search, SafeSearchType } = require('duck-duck-scrape');
-const { PDFParse } = require('pdf-parse');
+const pdfParse = require('pdf-parse');
 
 // Initialize Groq client using OpenAI SDK compatibility
 const openai = new OpenAI({
@@ -29,15 +29,13 @@ exports.uploadPdf = async (req, res) => {
       return res.status(400).json({ error: 'No PDF file uploaded.' });
     }
 
-    const parser = new PDFParse({});
-    await parser.load(req.file.buffer);
-    const text = (await parser.getText()).trim();
-    const info = await parser.getInfo();
+    const data = await pdfParse(req.file.buffer);
+    const text = data.text.trim();
     
     res.status(200).json({ 
       success: true, 
       text,
-      pages: info?.numPages || 0 
+      pages: data.numpages 
     });
   } catch (err) {
     console.error('Error parsing PDF:', err);
