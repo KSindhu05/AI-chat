@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore, CHAT_MODES, type ChatMode } from '@/store/chatStore';
 import { chatApi } from '@/lib/api';
@@ -37,20 +37,42 @@ export default function ChatWindow() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-scroll to bottom when messages change
+  // Auto-scroll to bottom when messages change (use instant during streaming to avoid jank)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, streamingContent]);
+    if (isStreaming) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
+    } else {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, isStreaming]);
 
-  // Detect scroll position for scroll-to-bottom button
+  // Only auto-scroll for streaming content every ~150ms to reduce reflow
+  const lastStreamScrollRef = useRef(0);
+  useEffect(() => {
+    if (!streamingContent) return;
+    const now = Date.now();
+    if (now - lastStreamScrollRef.current > 150) {
+      lastStreamScrollRef.current = now;
+      messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
+    }
+  }, [streamingContent]);
+
+  // Detect scroll position for scroll-to-bottom button (throttled)
   useEffect(() => {
     const el = scrollContainerRef.current;
     if (!el) return;
+    let ticking = false;
     const handleScroll = () => {
-      const distFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-      setShowScrollBtn(distFromBottom > 200);
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => {
+          const distFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+          setShowScrollBtn(distFromBottom > 200);
+          ticking = false;
+        });
+      }
     };
-    el.addEventListener('scroll', handleScroll);
+    el.addEventListener('scroll', handleScroll, { passive: true });
     return () => el.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -324,7 +346,7 @@ export default function ChatWindow() {
       </div>
 
       {/* Messages Area */}
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-4 py-6 hide-on-print relative" style={showExportMenu ? { display: 'none' } : {}}>
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-4 py-6 hide-on-print relative" style={{ WebkitOverflowScrolling: 'touch', ...(showExportMenu ? { display: 'none' } : {}) }}>
         <div className="max-w-3xl mx-auto space-y-4">
           {!hasMessages ? (
             /* Welcome Screen */

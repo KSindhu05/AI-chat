@@ -12,7 +12,6 @@
 'use client';
 
 import { useState, memo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -62,13 +61,11 @@ function MessageBubble({ role, content, image, isStreaming, timestamp, index, on
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: Math.min(index * 0.05, 0.3) }}
-      className={`group flex gap-3 my-4 ${isUser ? 'justify-end' : 'justify-start'}`}
+    <div
+      className={`group flex gap-3 my-4 msg-bubble-enter ${isUser ? 'justify-end' : 'justify-start'}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onTouchStart={() => setIsHovered(h => !h)}
     >
       {/* AI Avatar */}
       {!isUser && (
@@ -152,70 +149,64 @@ function MessageBubble({ role, content, image, isStreaming, timestamp, index, on
           </div>
         )}
 
-        {/* ===== Hover Action Bar ===== */}
-        <AnimatePresence>
-          {isHovered && !isStreaming && (
-            <motion.div
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.15 }}
-              className={`flex items-center gap-0.5 mt-1 ${isUser ? 'justify-end' : 'justify-start'}`}
+        {/* ===== Hover/Tap Action Bar ===== */}
+        {!isStreaming && (
+          <div
+            className={`flex items-center gap-0.5 mt-1 transition-opacity duration-150 ${isUser ? 'justify-end' : 'justify-start'} ${isHovered ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+          >
+            <ActionButton
+              onClick={handleCopyMessage}
+              title={copied ? 'Copied!' : 'Copy message'}
+              active={copied}
             >
-              <ActionButton
-                onClick={handleCopyMessage}
-                title={copied ? 'Copied!' : 'Copy message'}
-                active={copied}
-              >
-                {copied ? (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                ) : (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-                  </svg>
-                )}
-              </ActionButton>
+              {copied ? (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              ) : (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                  <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                </svg>
+              )}
+            </ActionButton>
 
-              {!isUser && onRegenerate && (
-                <ActionButton onClick={onRegenerate} title="Regenerate response">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="1 4 1 10 7 10" />
-                    <polyline points="23 20 23 14 17 14" />
-                    <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" />
+            {!isUser && onRegenerate && (
+              <ActionButton onClick={onRegenerate} title="Regenerate response">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="1 4 1 10 7 10" />
+                  <polyline points="23 20 23 14 17 14" />
+                  <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" />
+                </svg>
+              </ActionButton>
+            )}
+
+            {!isUser && (
+              <>
+                <ActionButton
+                  onClick={() => setReaction(reaction === 'like' ? null : 'like')}
+                  title="Good response"
+                  active={reaction === 'like'}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill={reaction === 'like' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
+                    <path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z" />
+                    <path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3" />
                   </svg>
                 </ActionButton>
-              )}
-
-              {!isUser && (
-                <>
-                  <ActionButton
-                    onClick={() => setReaction(reaction === 'like' ? null : 'like')}
-                    title="Good response"
-                    active={reaction === 'like'}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill={reaction === 'like' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
-                      <path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z" />
-                      <path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3" />
-                    </svg>
-                  </ActionButton>
-                  <ActionButton
-                    onClick={() => setReaction(reaction === 'dislike' ? null : 'dislike')}
-                    title="Bad response"
-                    active={reaction === 'dislike'}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill={reaction === 'dislike' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
-                      <path d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9a2 2 0 002 2.3H10z" />
-                      <path d="M17 2h2.67A2.31 2.31 0 0122 4v7a2.31 2.31 0 01-2.33 2H17" />
-                    </svg>
-                  </ActionButton>
-                </>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+                <ActionButton
+                  onClick={() => setReaction(reaction === 'dislike' ? null : 'dislike')}
+                  title="Bad response"
+                  active={reaction === 'dislike'}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill={reaction === 'dislike' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
+                    <path d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9a2 2 0 002 2.3H10z" />
+                    <path d="M17 2h2.67A2.31 2.31 0 0122 4v7a2.31 2.31 0 01-2.33 2H17" />
+                  </svg>
+                </ActionButton>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       {/* User Avatar */}
@@ -227,25 +218,23 @@ function MessageBubble({ role, content, image, isStreaming, timestamp, index, on
           </svg>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }
 
 function ActionButton({ onClick, title, active, children }: any) {
   return (
-    <motion.button
-      whileHover={{ scale: 1.15 }}
-      whileTap={{ scale: 0.9 }}
+    <button
       onClick={onClick}
       title={title}
-      className={`p-1.5 rounded-lg transition-colors ${
+      className={`p-1.5 rounded-lg transition-colors active:scale-90 ${
         active
           ? 'text-primary bg-primary/10'
           : 'text-muted-foreground hover:text-foreground hover:bg-surface-hover'
       }`}
     >
       {children}
-    </motion.button>
+    </button>
   );
 }
 

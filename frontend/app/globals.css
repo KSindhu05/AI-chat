@@ -119,7 +119,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* Removed smooth scroll — it fights mobile native scrolling and causes jank */
 }
 
 body {
@@ -128,6 +128,38 @@ body {
   font-family: "Inter", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Lightweight CSS-only message entrance (replaces heavy Framer Motion per-message) */
+@keyframes msg-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.msg-bubble-enter {
+  animation: msg-enter 0.25s ease-out both;
+  will-change: auto; /* Don't promote to GPU layer permanently */
+}
+
+/* Mobile scroll performance */
+@media (max-width: 768px) {
+  /* Reduce motion on mobile for performance */
+  .msg-bubble-enter {
+    animation-duration: 0.15s;
+  }
+
+  /* Prevent text selection during scroll on mobile */
+  .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y;
+  }
 }
 
 /* Custom scrollbar */
