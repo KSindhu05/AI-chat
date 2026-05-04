@@ -40,24 +40,26 @@ export default function ChatWindow() {
   const isUserScrolledUpRef = useRef(false);
   const isUserInteractingRef = useRef(false);
 
-  // Auto-scroll to bottom when messages change (use instant during streaming to avoid jank)
+  // Auto-scroll to bottom when a new message is fully added
   useEffect(() => {
     if (isUserScrolledUpRef.current || isUserInteractingRef.current) return;
-    if (isStreaming) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
-    } else {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (!isStreaming) {
+      setTimeout(() => {
+        const el = scrollContainerRef.current;
+        if (el) {
+          el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+        }
+      }, 100);
     }
   }, [messages, isStreaming]);
 
-  // Only auto-scroll for streaming content every ~150ms to reduce reflow
-  const lastStreamScrollRef = useRef(0);
+  // Smooth synchronous tracking of the bottom during streaming
   useEffect(() => {
     if (!streamingContent || isUserScrolledUpRef.current || isUserInteractingRef.current) return;
-    const now = Date.now();
-    if (now - lastStreamScrollRef.current > 150) {
-      lastStreamScrollRef.current = now;
-      messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
+    const el = scrollContainerRef.current;
+    if (el) {
+      // Keep it glued to the bottom without expensive scrollIntoView calls
+      el.scrollTop = el.scrollHeight;
     }
   }, [streamingContent]);
 
@@ -71,9 +73,17 @@ export default function ChatWindow() {
         ticking = true;
         requestAnimationFrame(() => {
           const distFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-          const isScrolledUp = distFromBottom > 50;
+          // Use a larger threshold (100px) to distinguish real user scrolling from AI text wrapping
+          const isScrolledUp = distFromBottom > 100;
           setShowScrollBtn(isScrolledUp);
-          isUserScrolledUpRef.current = isScrolledUp;
+          
+          // Only change the ref if the user actually scrolled up significantly
+          if (isScrolledUp) {
+            isUserScrolledUpRef.current = true;
+          } else if (distFromBottom <= 10) {
+            isUserScrolledUpRef.current = false;
+          }
+          
           ticking = false;
         });
       }
@@ -106,7 +116,10 @@ export default function ChatWindow() {
 
   const scrollToBottom = () => {
     isUserScrolledUpRef.current = false;
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const el = scrollContainerRef.current;
+    if (el) {
+      el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+    }
   };
 
   // Auto-resize textarea
