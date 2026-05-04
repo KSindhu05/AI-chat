@@ -89,6 +89,12 @@ export default function HomePage() {
 
       {/* Main Area */}
       <div className="flex-1 flex flex-col min-w-0 relative">
+        {/* Mode & Model selector in top bar */}
+        <div className="absolute top-2 right-4 z-20 flex items-center gap-2">
+          <ModelSelector />
+          <ModeSelector />
+        </div>
+
         <ChatWindow />
       </div>
     </div>
