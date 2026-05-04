@@ -13,6 +13,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  memories: string[];
 }
 
 export interface Chat {

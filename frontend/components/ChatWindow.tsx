@@ -23,6 +23,7 @@ export default function ChatWindow() {
     streamingContent, setStreamingContent, appendStreamingContent,
     suggestions, setSuggestions,
     currentMode, chats, addChat, setCurrentChatId, updateChat,
+    user
   } = useAppStore();
 
   const [input, setInput] = useState('');
@@ -308,7 +309,30 @@ export default function ChatWindow() {
   const currentChat = chats.find((c) => c._id === currentChatId);
   const modeInfo = CHAT_MODES[currentMode as ChatMode];
   const hasMessages = messages.length > 0 || streamingContent;
-  const userName = useAppStore.getState().user?.name?.split(' ')[0] || '';
+
+  // Extract name from memories or fallback to profile name
+  const userName = useMemo(() => {
+    if (!user) return '';
+
+    // Check if AI has remembered a specific name in memories
+    // (e.g., "User's name is Sindhu")
+    const nameMemory = user.memories?.find(m =>
+      m.toLowerCase().includes("user's name is") ||
+      m.toLowerCase().includes("user name is") ||
+      m.toLowerCase().includes("user's name: ")
+    );
+
+    if (nameMemory) {
+      // Extract everything after 'is' or ':'
+      const parts = nameMemory.split(/ is |: /i);
+      if (parts.length > 1) {
+        return parts[1].trim().split(' ')[0]; // Return first name
+      }
+    }
+
+    // Fallback to auth profile name
+    return user.name?.split(' ')[0] || '';
+  }, [user]);
 
   return (
     <div className="flex-1 flex flex-col h-screen">
