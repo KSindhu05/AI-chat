@@ -165,6 +165,11 @@ interface AppState {
   // Suggestions
   suggestions: string[];
   setSuggestions: (suggestions: string[]) => void;
+
+  // Artifacts
+  activeArtifact: { messageId: string; index: number; language: string; content: string } | null;
+  setActiveArtifact: (artifact: { messageId: string; index: number; language: string; content: string } | null) => void;
+  updateActiveArtifactContent: (content: string) => void;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -272,4 +277,11 @@ export const useAppStore = create<AppState>((set, get) => ({
   // Suggestions
   suggestions: [],
   setSuggestions: (suggestions) => set({ suggestions }),
+
+  // Artifacts
+  activeArtifact: null,
+  setActiveArtifact: (artifact) => set({ activeArtifact: artifact }),
+  updateActiveArtifactContent: (content) => set((state) => ({
+    activeArtifact: state.activeArtifact ? { ...state.activeArtifact, content } : null
+  })),
 }));

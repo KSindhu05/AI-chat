@@ -5,9 +5,8 @@
  * Uses a cache-first strategy for static assets and network-first for API calls.
  */
 
-const CACHE_NAME = 'sinvichat-v1';
+const CACHE_NAME = 'sinvichat-v3';
 const STATIC_ASSETS = [
-  '/',
   '/ai-logo.png',
   '/manifest.json',
 ];
@@ -44,13 +43,18 @@ self.addEventListener('fetch', (event) => {
   // Skip non-GET requests
   if (request.method !== 'GET') return;
 
-  // Skip API calls and streaming endpoints — always go to network
-  if (url.pathname.startsWith('/api') || url.origin !== self.location.origin) {
+  // Skip API calls, streaming endpoints, and Next.js RSC payloads — always go to network
+  if (
+    url.pathname.startsWith('/api') || 
+    url.origin !== self.location.origin ||
+    url.searchParams.has('_rsc') || 
+    request.headers.get('RSC') === '1'
+  ) {
     return;
   }
 
   // For navigation requests (HTML pages) — network first, fallback to cache
-  if (request.mode === 'navigate') {
+  if (request.mode === 'navigate' || request.headers.get('accept')?.includes('text/html')) {
     event.respondWith(
       fetch(request)
         .then((response) => {

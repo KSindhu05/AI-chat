@@ -430,6 +430,7 @@ export default function ChatWindow() {
               {messages.map((msg, i) => (
                 <MessageBubble
                   key={msg._id}
+                  messageId={msg._id}
                   role={msg.role as 'user' | 'assistant'}
                   content={msg.content}
                   image={msg.image}
@@ -442,6 +443,7 @@ export default function ChatWindow() {
               {/* Streaming message */}
               {isStreaming && streamingContent && (
                 <MessageBubble
+                  messageId="streaming"
                   role="assistant"
                   content={streamingContent}
                   isStreaming

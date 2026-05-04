@@ -18,6 +18,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 interface MessageBubbleProps {
+  messageId: string;
   role: 'user' | 'assistant';
   content: string;
   image?: string;
@@ -37,7 +38,7 @@ function formatTime(ts?: string): string {
   }
 }
 
-function MessageBubble({ role, content, image, isStreaming, timestamp, index, onRegenerate }: MessageBubbleProps) {
+function MessageBubble({ messageId, role, content, image, isStreaming, timestamp, index, onRegenerate }: MessageBubbleProps) {
   const isUser = role === 'user';
   const [isHovered, setIsHovered] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -117,9 +118,28 @@ function MessageBubble({ role, content, image, isStreaming, timestamp, index, on
                       );
                     }
 
+                    let codeIndex = 0; // In a full implementation, we'd track the index of the code block. We'll use a random id or just use 0 for simplicity per message.
+                    
+                    const language = match?.[1] || 'text';
+                    const isLongCode = codeString.split('\n').length > 5;
+                    const isRenderable = ['html', 'svg', 'react', 'javascript', 'python'].includes(language.toLowerCase());
+                    const isArtifact = isLongCode || isRenderable;
+
+                    if (isArtifact) {
+                      return (
+                        <ArtifactCard
+                          messageId={messageId}
+                          index={codeIndex}
+                          language={language}
+                          code={codeString}
+                          isStreaming={isStreaming}
+                        />
+                      );
+                    }
+
                     return (
                       <CodeBlock
-                        language={match?.[1] || 'text'}
+                        language={language}
                         code={codeString}
                       />
                     );
@@ -300,6 +320,68 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
       >
         {code}
       </SyntaxHighlighter>
+    </div>
+  );
+}
+
+import { useAppStore } from '@/store/chatStore';
+import { useEffect } from 'react';
+
+function ArtifactCard({ messageId, index, language, code, isStreaming }: any) {
+  const { activeArtifact, setActiveArtifact, updateActiveArtifactContent } = useAppStore();
+  
+  const isThisActive = activeArtifact?.messageId === messageId && activeArtifact?.index === index;
+
+  // Sync content if this artifact is currently active (e.g., during streaming)
+  useEffect(() => {
+    if (isThisActive && isStreaming) {
+      updateActiveArtifactContent(code);
+    }
+  }, [code, isThisActive, isStreaming, updateActiveArtifactContent]);
+
+  const handleOpen = () => {
+    setActiveArtifact({
+      messageId,
+      index,
+      language,
+      content: code,
+      title: `${language.charAt(0).toUpperCase() + language.slice(1)} Code`
+    });
+  };
+
+  return (
+    <div 
+      onClick={handleOpen}
+      className={`my-3 p-4 rounded-xl border border-border bg-surface-hover cursor-pointer transition-all hover:border-primary/50 group ${isThisActive ? 'ring-2 ring-primary/30 border-primary' : ''}`}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-background rounded-lg text-primary shadow-sm group-hover:scale-105 transition-transform">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polyline points="16 18 22 12 16 6" />
+              <polyline points="8 6 2 12 8 18" />
+            </svg>
+          </div>
+          <div>
+            <h4 className="text-sm font-semibold text-foreground">Generated {language}</h4>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {isStreaming ? (
+                <span className="flex items-center gap-1 text-primary">
+                  <span className="animate-pulse">Generating...</span>
+                </span>
+              ) : (
+                'Click to open in split view'
+              )}
+            </p>
+          </div>
+        </div>
+        <div className="text-muted-foreground group-hover:text-primary transition-colors">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+          </svg>
+        </div>
+      </div>
     </div>
   );
 }

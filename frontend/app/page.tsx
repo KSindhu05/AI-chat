@@ -7,8 +7,9 @@ import Sidebar from '@/components/Sidebar';
 import ChatWindow from '@/components/ChatWindow';
 import ModeSelector from '@/components/ModeSelector';
 import ModelSelector from '@/components/ModelSelector';
+import ArtifactPanel from '@/components/ArtifactPanel';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 /**
  * Home Page — ChatGPT-style direct chat interface.
@@ -17,7 +18,7 @@ import { motion } from 'framer-motion';
  * or shows a sleek login/register prompt if not.
  */
 export default function HomePage() {
-  const { user, loadAuth, loadTheme, setChats, sidebarOpen } = useAppStore();
+  const { user, loadAuth, loadTheme, setChats, sidebarOpen, activeArtifact } = useAppStore();
   const [mounted, setMounted] = useState(false);
 
   // Initialize on mount
@@ -88,14 +89,32 @@ export default function HomePage() {
       <Sidebar />
 
       {/* Main Area */}
-      <div className="flex-1 flex flex-col min-w-0 relative">
-        {/* Mode & Model selector in top bar */}
-        <div className="absolute top-2 right-4 z-20 flex items-center gap-2">
-          <ModelSelector />
-          <ModeSelector />
+      <div className="flex-1 flex min-w-0 relative bg-background">
+        {/* Chat Window Container */}
+        <div className={`flex-1 flex flex-col min-w-0 relative transition-all duration-300 ${activeArtifact ? 'hidden lg:flex lg:w-1/2 lg:flex-none' : ''}`}>
+          {/* Mode & Model selector in top bar */}
+          <div className="absolute top-2 right-4 z-20 flex items-center gap-2">
+            <ModelSelector />
+            <ModeSelector />
+          </div>
+
+          <ChatWindow />
         </div>
 
-        <ChatWindow />
+        {/* Artifact Panel Container */}
+        <AnimatePresence>
+          {activeArtifact && (
+            <motion.div
+              initial={{ x: '100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: '100%', opacity: 0 }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="absolute inset-0 z-40 lg:relative lg:z-auto lg:flex-1 lg:w-1/2 border-l border-border bg-background shadow-2xl lg:shadow-none"
+            >
+              <ArtifactPanel />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
