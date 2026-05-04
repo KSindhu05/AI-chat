@@ -451,7 +451,7 @@ export default function ChatWindow() {
                 />
               )}
 
-              {/* Typing indicator — "Aether is thinking..." */}
+              {/* Typing indicator — "Nova AI is thinking..." */}
               {isStreaming && !streamingContent && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -472,7 +472,7 @@ export default function ChatWindow() {
                         <span className="typing-dot w-2 h-2 rounded-full bg-primary" />
                         <span className="typing-dot w-2 h-2 rounded-full bg-primary" />
                       </div>
-                      <span className="text-xs text-muted-foreground ml-1">Aether is thinking...</span>
+                      <span className="text-xs text-muted-foreground ml-1">Nova AI is thinking...</span>
                     </div>
                   </div>
                 </motion.div>

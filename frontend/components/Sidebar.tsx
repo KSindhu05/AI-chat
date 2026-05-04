@@ -138,9 +138,9 @@ export default function Sidebar() {
             <div className="p-4 border-b border-border">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-black">
-                  <img src="/ai-logo.png" alt="Aether Logo" className="w-full h-full object-cover" />
+                  <img src="/ai-logo.png" alt="Nova AI Logo" className="w-full h-full object-cover" />
                 </div>
-                <h1 className="text-lg font-semibold font-[Outfit] tracking-wide text-foreground">AETHER</h1>
+                <h1 className="text-lg font-semibold font-[Outfit] tracking-wide text-foreground">NOVA AI</h1>
                 <button
                   onClick={toggleSidebar}
                   className="ml-auto p-1.5 rounded-lg hover:bg-surface-hover transition-colors lg:hidden"
