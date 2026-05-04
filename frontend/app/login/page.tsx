@@ -49,7 +49,7 @@ export default function LoginPage() {
             <span className="text-3xl">✨</span>
           </motion.div>
           <h1 className="text-3xl font-bold font-[Outfit]">Welcome Back</h1>
-          <p className="text-muted-foreground mt-2">Sign in to continue to Aether</p>
+          <p className="text-muted-foreground mt-2">Sign in to continue to Sindhu</p>
         </div>
 
         {/* Form Card */}

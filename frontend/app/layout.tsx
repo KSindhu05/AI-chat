@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Aether — AI-Powered Chat Assistant",
+  title: "Sindhu AI — Chat Assistant",
   description: "A modern AI chat application with multiple modes, voice input, streaming responses, and beautiful UI. Your intelligent conversation partner.",
   keywords: ["AI Chat", "ChatGPT", "AI Assistant", "Coding Helper", "Text Summarizer"],
   manifest: "/manifest.json",

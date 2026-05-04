@@ -1,6 +1,6 @@
 {
-  "name": "SinviChat — AI Chat Assistant",
-  "short_name": "SinviChat",
+  "name": "Sindhu AI Chat Assistant",
+  "short_name": "Sindhu AI",
   "description": "AI-Powered Chat Assistant with multiple modes, voice input, and streaming responses.",
   "start_url": "/",
   "display": "standalone",
@@ -58,5 +58,8 @@
     }
   ],
   "screenshots": [],
-  "categories": ["productivity", "utilities"]
+  "categories": [
+    "productivity",
+    "utilities"
+  ]
 }

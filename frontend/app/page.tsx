@@ -58,7 +58,7 @@ export default function HomePage() {
           </div>
 
           <h1 className="text-4xl font-bold font-[Outfit] mb-2 tracking-wide text-foreground">
-            AETHER
+            SINDHU
           </h1>
           <p className="text-muted-foreground mb-8">AI-Powered Chat Assistant</p>
 

@@ -140,7 +140,7 @@ export default function Sidebar() {
               <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-black">
                 <img src="/ai-logo.png" alt="Aether Logo" className="w-full h-full object-cover" />
               </div>
-              <h1 className="text-lg font-semibold font-[Outfit] tracking-wide text-foreground">AETHER</h1>
+              <h1 className="text-lg font-semibold font-[Outfit] tracking-wide text-foreground">SINDHU</h1>
               <button
                 onClick={toggleSidebar}
                 className="ml-auto p-1.5 rounded-lg hover:bg-surface-hover transition-colors lg:hidden"
