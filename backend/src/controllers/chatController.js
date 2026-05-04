@@ -395,15 +395,15 @@ async function generateChatTitle(chat, firstMessage, aiResponse) {
       messages: [
         {
           role: 'system',
-          content: `Generate a short, descriptive title (3-6 words) for a conversation. The title should clearly describe the topic being discussed.
+          content: `Generate a very short, punchy "shortcut" title (1-3 words maximum) for a conversation. Include a single relevant emoji at the very beginning.
 
 Rules:
-- Return ONLY the title text, nothing else
-- No quotes around the title
-- No period or punctuation at the end
-- Capitalize like a headline (e.g., "JavaScript Closures Explanation")
-- Be specific, not generic (e.g., "Python Smallest Number Code" not "Coding Help")
-- If the user asked a question, the title should reflect the topic, not the question format`,
+- Format exactly like: "🚀 Topic Name"
+- Absolute maximum of 3 words (excluding the emoji)
+- Return ONLY the emoji and title text, nothing else
+- No quotes, no periods
+- Capitalize like a headline
+- Be ultra-concise and specific (e.g., "🐛 Python Debug", "👋 Introductions", "📝 Resume Help")`,
         },
         { 
           role: 'user', 
