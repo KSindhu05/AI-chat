@@ -37,9 +37,11 @@ export default function ChatWindow() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pdfInputRef = useRef<HTMLInputElement>(null);
+  const isUserScrolledUpRef = useRef(false);
 
   // Auto-scroll to bottom when messages change (use instant during streaming to avoid jank)
   useEffect(() => {
+    if (isUserScrolledUpRef.current) return;
     if (isStreaming) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
     } else {
@@ -50,7 +52,7 @@ export default function ChatWindow() {
   // Only auto-scroll for streaming content every ~150ms to reduce reflow
   const lastStreamScrollRef = useRef(0);
   useEffect(() => {
-    if (!streamingContent) return;
+    if (!streamingContent || isUserScrolledUpRef.current) return;
     const now = Date.now();
     if (now - lastStreamScrollRef.current > 150) {
       lastStreamScrollRef.current = now;
@@ -68,7 +70,9 @@ export default function ChatWindow() {
         ticking = true;
         requestAnimationFrame(() => {
           const distFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-          setShowScrollBtn(distFromBottom > 200);
+          const isScrolledUp = distFromBottom > 200;
+          setShowScrollBtn(isScrolledUp);
+          isUserScrolledUpRef.current = isScrolledUp;
           ticking = false;
         });
       }
@@ -100,6 +104,7 @@ export default function ChatWindow() {
   }, []);
 
   const scrollToBottom = () => {
+    isUserScrolledUpRef.current = false;
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
