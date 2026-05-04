@@ -38,11 +38,45 @@ function formatTime(ts?: string): string {
   }
 }
 
+function useSmoothTypewriter(text: string, isStreaming?: boolean) {
+  const [displayedText, setDisplayedText] = useState(text);
+
+  useEffect(() => {
+    if (!isStreaming) {
+      setDisplayedText(text);
+      return;
+    }
+
+    if (text === displayedText) return;
+
+    if (text.length < displayedText.length) {
+      setDisplayedText(text);
+      return;
+    }
+
+    const currentLength = displayedText.length;
+    const targetLength = text.length;
+    
+    // Catch up dynamically based on how far behind we are
+    const charsToAdd = Math.max(1, Math.floor((targetLength - currentLength) / 3));
+
+    const timeout = setTimeout(() => {
+      setDisplayedText(text.slice(0, currentLength + charsToAdd));
+    }, 20); // ~50fps
+
+    return () => clearTimeout(timeout);
+  }, [text, displayedText, isStreaming]);
+
+  return displayedText;
+}
+
 function MessageBubble({ messageId, role, content, image, isStreaming, timestamp, index, onRegenerate }: MessageBubbleProps) {
   const isUser = role === 'user';
   const [isHovered, setIsHovered] = useState(false);
   const [copied, setCopied] = useState(false);
   const [reaction, setReaction] = useState<'like' | 'dislike' | null>(null);
+
+  const displayContent = useSmoothTypewriter(content, isStreaming);
 
   const handleCopyMessage = async () => {
     try {
@@ -118,7 +152,7 @@ function MessageBubble({ messageId, role, content, image, isStreaming, timestamp
                       );
                     }
 
-                    let codeIndex = 0; // In a full implementation, we'd track the index of the code block. We'll use a random id or just use 0 for simplicity per message.
+                    let codeIndex = 0; // In a full implementation, we'd track the index of the code block. We'd use a random id or just use 0 for simplicity per message.
                     
                     const language = match?.[1] || 'text';
                     const isLongCode = codeString.split('\n').length > 5;
@@ -146,14 +180,12 @@ function MessageBubble({ messageId, role, content, image, isStreaming, timestamp
                   },
                 }}
               >
-                {content}
+                {displayContent}
               </ReactMarkdown>
+              {isStreaming && (
+                <span className="inline-block w-1.5 h-4 ml-1 bg-primary/80 animate-pulse align-middle" />
+              )}
             </div>
-          )}
-
-          {/* Streaming cursor */}
-          {isStreaming && (
-            <span className="inline-block w-2 h-4 bg-primary/70 ml-0.5 animate-pulse rounded-sm" />
           )}
         </div>
 
