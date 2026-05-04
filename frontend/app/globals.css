@@ -34,30 +34,8 @@
   --animate-duration-slow: 500ms;
 }
 
-/* Dark theme (Zinc 950 base) */
+/* Light theme (Pure white base) - Now Default */
 :root {
-  --background: #09090b;
-  --foreground: #fafafa;
-  --surface: #09090b;
-  --surface-hover: #27272a;
-  --border-color: #27272a;
-  --border-light: #3f3f46;
-  --primary: #7c3aed;
-  --primary-hover: #8b5cf6;
-  --primary-glow: rgba(124, 58, 237, 0.15);
-  --accent: #06b6d4;
-  --muted: #a1a1aa;
-  --muted-fg: #d4d4d8;
-  --danger: #ef4444;
-  --success: #10b981;
-  --user-bubble: #18181b;
-  --ai-bubble: transparent;
-  --sidebar-bg: #09090b;
-  --input-bg: #18181b;
-}
-
-/* Light theme (Pure white base) */
-.light {
   --background: #ffffff;
   --foreground: #09090b;
   --surface: #ffffff;

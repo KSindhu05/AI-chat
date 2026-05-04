@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore, CHAT_MODES, type ChatMode } from '@/store/chatStore';
 import { chatApi } from '@/lib/api';
 import SearchModal from './SearchModal';
+import InstallPWA from './InstallPWA';
 
 export default function Sidebar() {
   const {
@@ -192,6 +193,9 @@ export default function Sidebar() {
               <span className="flex-1 text-left">Search...</span>
               <kbd className="px-1.5 py-0.5 rounded bg-surface-hover border border-border text-[10px] font-mono">⌘K</kbd>
             </button>
+
+            {/* Install PWA Button */}
+            <InstallPWA />
           </div>
 
           {/* Chat List */}
@@ -262,22 +266,7 @@ export default function Sidebar() {
 
           {/* Footer — Theme toggle + User */}
           <div className="p-3 border-t border-border space-y-2">
-            {/* Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="w-full flex items-center gap-2 px-3 py-2 rounded-xl
-                         hover:bg-surface-hover transition-colors text-sm text-muted-foreground"
-            >
-              <span className="text-lg">{theme === 'dark' ? '🌙' : '☀️'}</span>
-              <span>{theme === 'dark' ? 'Dark' : 'Light'}</span>
-              <div className="ml-auto w-10 h-5 rounded-full bg-border relative transition-colors">
-                <motion.div
-                  className="w-4 h-4 rounded-full bg-primary absolute top-0.5"
-                  animate={{ left: theme === 'dark' ? '2px' : '22px' }}
-                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                />
-              </div>
-            </button>
+
 
             {/* User profile */}
             {user && (

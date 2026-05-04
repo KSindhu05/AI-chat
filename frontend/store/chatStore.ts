@@ -183,41 +183,48 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
   loadAuth: () => {
     if (typeof window === 'undefined') return;
-    const token = localStorage.getItem('token');
-    const userStr = localStorage.getItem('user');
-    if (token && userStr) {
-      try {
-        const user = JSON.parse(userStr);
-        set({ user, token });
-      } catch {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+    try {
+      const token = localStorage.getItem('token');
+      const userStr = localStorage.getItem('user');
+      if (token && userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          set({ user, token });
+        } catch {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        }
       }
+    } catch (err) {
+      console.error('Auth storage error:', err);
     }
   },
 
   // Theme
-  theme: 'dark',
+  theme: 'light',
   accentColor: 'purple',
   setAccentColor: (color) => {
-    localStorage.setItem('accentColor', color);
+    try {
+      localStorage.setItem('accentColor', color);
+    } catch (e) {}
     document.documentElement.setAttribute('data-accent', color);
     set({ accentColor: color });
   },
   toggleTheme: () => {
-    const newTheme = get().theme === 'dark' ? 'light' : 'dark';
-    localStorage.setItem('theme', newTheme);
-    document.documentElement.classList.toggle('light', newTheme === 'light');
-    set({ theme: newTheme });
+    // Disabled
   },
   loadTheme: () => {
     if (typeof window === 'undefined') return;
-    const saved = localStorage.getItem('theme') as 'dark' | 'light' | null;
-    const theme = saved || 'dark';
-    const accent = localStorage.getItem('accentColor') || 'purple';
-    document.documentElement.classList.toggle('light', theme === 'light');
-    document.documentElement.setAttribute('data-accent', accent);
-    set({ theme, accentColor: accent });
+    try {
+      const accent = localStorage.getItem('accentColor') || 'purple';
+      // Force light theme
+      document.documentElement.classList.add('light');
+      document.documentElement.setAttribute('data-accent', accent);
+      set({ theme: 'light', accentColor: accent });
+    } catch (err) {
+      console.error('Theme storage error:', err);
+      set({ theme: 'light', accentColor: 'purple' });
+    }
   },
 
   // Sidebar
