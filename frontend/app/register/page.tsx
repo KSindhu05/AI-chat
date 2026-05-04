@@ -55,7 +55,7 @@ export default function RegisterPage() {
             <span className="text-3xl">🚀</span>
           </motion.div>
           <h1 className="text-3xl font-bold font-[Outfit]">Create Account</h1>
-          <p className="text-muted-foreground mt-2">Join Sindhu and start chatting with AI</p>
+          <p className="text-muted-foreground mt-2">Join Aether and start chatting with AI</p>
         </div>
 
         <div className="glass rounded-2xl p-6 shadow-xl">

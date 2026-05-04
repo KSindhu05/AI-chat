@@ -127,176 +127,176 @@ export default function Sidebar() {
         {sidebarOpen && (
           <motion.aside
             key="sidebar"
-          initial={{ x: -300, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: -300, opacity: 0 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className="fixed lg:relative z-40 h-screen w-72 flex flex-col border-r border-border"
-          style={{ background: 'var(--sidebar-bg)' }}
-        >
-          {/* Header */}
-          <div className="p-4 border-b border-border">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-black">
-                <img src="/ai-logo.png" alt="Aether Logo" className="w-full h-full object-cover" />
-              </div>
-              <h1 className="text-lg font-semibold font-[Outfit] tracking-wide text-foreground">SINDHU</h1>
-              <button
-                onClick={toggleSidebar}
-                className="ml-auto p-1.5 rounded-lg hover:bg-surface-hover transition-colors lg:hidden"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M18 6L6 18M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            {/* New Chat Button */}
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleNewChat()}
-                disabled={loading}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border
-                           hover:bg-surface-hover transition-all duration-200
-                           text-sm font-medium group"
-              >
-                <svg
-                  className="w-4 h-4 text-primary group-hover:rotate-90 transition-transform duration-300"
-                  viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                >
-                  <path d="M12 5v14M5 12h14" />
-                </svg>
-                New Chat
-              </button>
-              <button
-                onClick={() => setShowCustomModal(true)}
-                disabled={loading}
-                className="px-3 py-2.5 rounded-xl border border-border bg-surface
-                           hover:bg-surface-hover hover:border-primary/50 transition-all duration-200
-                           text-sm font-medium"
-                title="Create Custom Persona"
-              >
-                🎭
-              </button>
-            </div>
-
-            {/* Search Button */}
-            <button
-              onClick={() => setShowSearch(true)}
-              className="w-full flex items-center gap-2 mt-2 px-3 py-2 rounded-xl border border-border
-                         hover:bg-surface-hover transition-all text-sm text-muted-foreground"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-              <span className="flex-1 text-left">Search...</span>
-              <kbd className="px-1.5 py-0.5 rounded bg-surface-hover border border-border text-[10px] font-mono">⌘K</kbd>
-            </button>
-
-            {/* Install PWA Button */}
-            <InstallPWA />
-          </div>
-
-          {/* Chat List */}
-          <div className="flex-1 overflow-y-auto p-2 space-y-1">
-            {/* Pinned Section */}
-            {pinnedChats.length > 0 && (
-              <>
-                <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                  📌 Pinned
+            initial={{ x: -300, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -300, opacity: 0 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed lg:relative z-40 h-screen w-72 flex flex-col border-r border-border"
+            style={{ background: 'var(--sidebar-bg)' }}
+          >
+            {/* Header */}
+            <div className="p-4 border-b border-border">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-black">
+                  <img src="/ai-logo.png" alt="Aether Logo" className="w-full h-full object-cover" />
                 </div>
-                <AnimatePresence>
-                  {pinnedChats.map((chat, i) => (
-                    <ChatItem
-                      key={chat._id}
-                      chat={chat}
-                      index={i}
-                      currentChatId={currentChatId}
-                      renamingId={renamingId}
-                      renameValue={renameValue}
-                      setRenameValue={setRenameValue}
-                      onSelect={handleSelectChat}
-                      onRename={handleRename}
-                      onStartRename={startRename}
-                      onDelete={handleDeleteChat}
-                      onTogglePin={() => togglePinChat(chat._id)}
-                      setRenamingId={setRenamingId}
-                    />
-                  ))}
-                </AnimatePresence>
-                <div className="border-b border-border my-2" />
-              </>
-            )}
-
-            {/* All Chats */}
-            {unpinnedChats.length > 0 && pinnedChats.length > 0 && (
-              <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                Recent
-              </div>
-            )}
-            <AnimatePresence>
-              {unpinnedChats.map((chat, i) => (
-                <ChatItem
-                  key={chat._id}
-                  chat={chat}
-                  index={i}
-                  currentChatId={currentChatId}
-                  renamingId={renamingId}
-                  renameValue={renameValue}
-                  setRenameValue={setRenameValue}
-                  onSelect={handleSelectChat}
-                  onRename={handleRename}
-                  onStartRename={startRename}
-                  onDelete={handleDeleteChat}
-                  onTogglePin={() => togglePinChat(chat._id)}
-                  setRenamingId={setRenamingId}
-                />
-              ))}
-            </AnimatePresence>
-
-            {chats.length === 0 && (
-              <div className="text-center text-muted py-8 text-sm">
-                <p className="text-2xl mb-2">💭</p>
-                <p>No conversations yet</p>
-                <p className="text-xs mt-1">Click &quot;New Chat&quot; to start</p>
-              </div>
-            )}
-          </div>
-
-          {/* Footer — Theme toggle + User */}
-          <div className="p-3 border-t border-border space-y-2">
-
-
-            {/* User profile */}
-            {user && (
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors">
-                <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-xs font-semibold text-primary">
-                  {user.name?.charAt(0).toUpperCase() || user.email.charAt(0).toUpperCase()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{user.name || user.email}</p>
-                </div>
+                <h1 className="text-lg font-semibold font-[Outfit] tracking-wide text-foreground">AETHER</h1>
                 <button
-                  onClick={logout}
-                  className="p-1.5 rounded-lg hover:bg-danger/20 hover:text-danger transition-colors"
-                  title="Logout"
+                  onClick={toggleSidebar}
+                  className="ml-auto p-1.5 rounded-lg hover:bg-surface-hover transition-colors lg:hidden"
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M18 6L6 18M6 6l12 12" />
                   </svg>
                 </button>
               </div>
-            )}
-          </div>
-        </motion.aside>
-      )}
+
+              {/* New Chat Button */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleNewChat()}
+                  disabled={loading}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border
+                           hover:bg-surface-hover transition-all duration-200
+                           text-sm font-medium group"
+                >
+                  <svg
+                    className="w-4 h-4 text-primary group-hover:rotate-90 transition-transform duration-300"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  >
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
+                  New Chat
+                </button>
+                <button
+                  onClick={() => setShowCustomModal(true)}
+                  disabled={loading}
+                  className="px-3 py-2.5 rounded-xl border border-border bg-surface
+                           hover:bg-surface-hover hover:border-primary/50 transition-all duration-200
+                           text-sm font-medium"
+                  title="Create Custom Persona"
+                >
+                  🎭
+                </button>
+              </div>
+
+              {/* Search Button */}
+              <button
+                onClick={() => setShowSearch(true)}
+                className="w-full flex items-center gap-2 mt-2 px-3 py-2 rounded-xl border border-border
+                         hover:bg-surface-hover transition-all text-sm text-muted-foreground"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <span className="flex-1 text-left">Search...</span>
+                <kbd className="px-1.5 py-0.5 rounded bg-surface-hover border border-border text-[10px] font-mono">⌘K</kbd>
+              </button>
+
+              {/* Install PWA Button */}
+              <InstallPWA />
+            </div>
+
+            {/* Chat List */}
+            <div className="flex-1 overflow-y-auto p-2 space-y-1">
+              {/* Pinned Section */}
+              {pinnedChats.length > 0 && (
+                <>
+                  <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    📌 Pinned
+                  </div>
+                  <AnimatePresence>
+                    {pinnedChats.map((chat, i) => (
+                      <ChatItem
+                        key={chat._id}
+                        chat={chat}
+                        index={i}
+                        currentChatId={currentChatId}
+                        renamingId={renamingId}
+                        renameValue={renameValue}
+                        setRenameValue={setRenameValue}
+                        onSelect={handleSelectChat}
+                        onRename={handleRename}
+                        onStartRename={startRename}
+                        onDelete={handleDeleteChat}
+                        onTogglePin={() => togglePinChat(chat._id)}
+                        setRenamingId={setRenamingId}
+                      />
+                    ))}
+                  </AnimatePresence>
+                  <div className="border-b border-border my-2" />
+                </>
+              )}
+
+              {/* All Chats */}
+              {unpinnedChats.length > 0 && pinnedChats.length > 0 && (
+                <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                  Recent
+                </div>
+              )}
+              <AnimatePresence>
+                {unpinnedChats.map((chat, i) => (
+                  <ChatItem
+                    key={chat._id}
+                    chat={chat}
+                    index={i}
+                    currentChatId={currentChatId}
+                    renamingId={renamingId}
+                    renameValue={renameValue}
+                    setRenameValue={setRenameValue}
+                    onSelect={handleSelectChat}
+                    onRename={handleRename}
+                    onStartRename={startRename}
+                    onDelete={handleDeleteChat}
+                    onTogglePin={() => togglePinChat(chat._id)}
+                    setRenamingId={setRenamingId}
+                  />
+                ))}
+              </AnimatePresence>
+
+              {chats.length === 0 && (
+                <div className="text-center text-muted py-8 text-sm">
+                  <p className="text-2xl mb-2">💭</p>
+                  <p>No conversations yet</p>
+                  <p className="text-xs mt-1">Click &quot;New Chat&quot; to start</p>
+                </div>
+              )}
+            </div>
+
+            {/* Footer — Theme toggle + User */}
+            <div className="p-3 border-t border-border space-y-2">
+
+
+              {/* User profile */}
+              {user && (
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors">
+                  <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-xs font-semibold text-primary">
+                    {user.name?.charAt(0).toUpperCase() || user.email.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{user.name || user.email}</p>
+                  </div>
+                  <button
+                    onClick={logout}
+                    className="p-1.5 rounded-lg hover:bg-danger/20 hover:text-danger transition-colors"
+                    title="Logout"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+            </div>
+          </motion.aside>
+        )}
       </AnimatePresence>
 
       {/* Custom Persona Modal */}
       {showCustomModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className="bg-surface border border-border rounded-2xl shadow-2xl p-6 w-full max-w-md"
@@ -314,13 +314,13 @@ export default function Sidebar() {
               className="w-full h-32 bg-background border border-border rounded-xl p-3 text-sm focus:outline-none focus:border-primary mb-4 resize-none"
             />
             <div className="flex justify-end gap-2">
-              <button 
+              <button
                 onClick={() => setShowCustomModal(false)}
                 className="px-4 py-2 rounded-xl text-muted-foreground hover:bg-surface-hover transition-colors text-sm font-medium"
               >
                 Cancel
               </button>
-              <button 
+              <button
                 onClick={() => handleNewChat(customPromptText)}
                 disabled={!customPromptText.trim() || loading}
                 className="px-4 py-2 rounded-xl bg-primary text-white hover:bg-primary-hover transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
@@ -331,7 +331,7 @@ export default function Sidebar() {
           </motion.div>
         </div>
       )}
-    
+
       {/* Search Modal */}
       <SearchModal isOpen={showSearch} onClose={() => setShowSearch(false)} />
     </>

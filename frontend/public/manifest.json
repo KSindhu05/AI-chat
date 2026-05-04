@@ -1,6 +1,6 @@
 {
-  "name": "Sindhu AI Chat Assistant",
-  "short_name": "Sindhu AI",
+  "name": "Nova AI Chat Assistant",
+  "short_name": "Nova AI",
   "description": "AI-Powered Chat Assistant with multiple modes, voice input, and streaming responses.",
   "start_url": "/",
   "display": "standalone",

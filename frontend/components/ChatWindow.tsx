@@ -76,14 +76,14 @@ export default function ChatWindow() {
           // Use a larger threshold (100px) to distinguish real user scrolling from AI text wrapping
           const isScrolledUp = distFromBottom > 100;
           setShowScrollBtn(isScrolledUp);
-          
+
           // Only change the ref if the user actually scrolled up significantly
           if (isScrolledUp) {
             isUserScrolledUpRef.current = true;
           } else if (distFromBottom <= 10) {
             isUserScrolledUpRef.current = false;
           }
-          
+
           ticking = false;
         });
       }
@@ -163,7 +163,7 @@ export default function ChatWindow() {
     const currentWebSearch = webSearch;
     const currentPdfText = attachedPdf ? attachedPdf.text : null;
     const currentPdfName = attachedPdf ? attachedPdf.name : null;
-    
+
     setAttachedImage(null);
     setAttachedPdf(null);
     setIsStreaming(true);
@@ -202,7 +202,7 @@ export default function ChatWindow() {
         // Refresh chat list to get updated title
         chatApi.getChats().then((res) => {
           useAppStore.getState().setChats(res.data);
-        }).catch(() => {});
+        }).catch(() => { });
       },
       (error) => {
         console.error('Stream error:', error);
@@ -340,7 +340,7 @@ export default function ChatWindow() {
           {/* Export Menu */}
           {hasMessages && (
             <div className="relative">
-              <button 
+              <button
                 onClick={() => setShowExportMenu(!showExportMenu)}
                 className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-surface transition-colors"
                 title="Export Conversation"
@@ -351,16 +351,16 @@ export default function ChatWindow() {
                   <line x1="12" y1="15" x2="12" y2="3" />
                 </svg>
               </button>
-              
+
               {showExportMenu && (
                 <div className="absolute right-0 mt-2 w-48 bg-surface border border-border rounded-xl shadow-xl z-50 overflow-hidden hide-on-print">
-                  <button 
+                  <button
                     onClick={handleExportMarkdown}
                     className="w-full text-left px-4 py-3 text-sm hover:bg-background transition-colors flex items-center gap-2"
                   >
                     <span className="text-primary">↓</span> Export as Markdown
                   </button>
-                  <button 
+                  <button
                     onClick={handleExportPdf}
                     className="w-full text-left px-4 py-3 text-sm hover:bg-background transition-colors flex items-center gap-2 border-t border-border"
                   >
@@ -374,15 +374,15 @@ export default function ChatWindow() {
       </div>
 
       {/* Messages Area */}
-      <div 
-        ref={scrollContainerRef} 
-        className="flex-1 overflow-y-auto px-4 py-6 hide-on-print relative" 
+      <div
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto px-4 py-6 hide-on-print relative"
         style={{ WebkitOverflowScrolling: 'touch', ...(showExportMenu ? { display: 'none' } : {}) }}
         onTouchStart={() => { isUserInteractingRef.current = true; }}
         onTouchEnd={() => { setTimeout(() => { isUserInteractingRef.current = false; }, 200); }}
-        onWheel={() => { 
-          isUserInteractingRef.current = true; 
-          setTimeout(() => { isUserInteractingRef.current = false; }, 200); 
+        onWheel={() => {
+          isUserInteractingRef.current = true;
+          setTimeout(() => { isUserInteractingRef.current = false; }, 200);
         }}
       >
         <div className="max-w-3xl mx-auto space-y-4">
@@ -451,7 +451,7 @@ export default function ChatWindow() {
                 />
               )}
 
-              {/* Typing indicator — "Sindhu is thinking..." */}
+              {/* Typing indicator — "Aether is thinking..." */}
               {isStreaming && !streamingContent && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -472,7 +472,7 @@ export default function ChatWindow() {
                         <span className="typing-dot w-2 h-2 rounded-full bg-primary" />
                         <span className="typing-dot w-2 h-2 rounded-full bg-primary" />
                       </div>
-                      <span className="text-xs text-muted-foreground ml-1">Sindhu is thinking...</span>
+                      <span className="text-xs text-muted-foreground ml-1">Aether is thinking...</span>
                     </div>
                   </div>
                 </motion.div>
@@ -579,11 +579,11 @@ export default function ChatWindow() {
             </div>
           )}
           <div className="flex items-end gap-2 bg-surface-hover border border-border rounded-xl px-4 py-2 focus-within:border-muted-foreground transition-colors shadow-sm">
-            <input 
-              type="file" 
-              accept="image/*" 
+            <input
+              type="file"
+              accept="image/*"
               capture="environment"
-              className="hidden" 
+              className="hidden"
               ref={fileInputRef}
               onChange={handleImageUpload}
             />
@@ -599,10 +599,10 @@ export default function ChatWindow() {
               </svg>
             </button>
 
-            <input 
-              type="file" 
-              accept=".pdf,application/pdf" 
-              className="hidden" 
+            <input
+              type="file"
+              accept=".pdf,application/pdf"
+              className="hidden"
               ref={pdfInputRef}
               onChange={handlePdfUpload}
             />
@@ -635,9 +635,8 @@ export default function ChatWindow() {
             <div className="flex items-center gap-1 flex-shrink-0 pb-0.5">
               <button
                 onClick={() => setWebSearch(!webSearch)}
-                className={`p-2 rounded-xl transition-colors ${
-                  webSearch ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-surface'
-                }`}
+                className={`p-2 rounded-xl transition-colors ${webSearch ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-surface'
+                  }`}
                 title={webSearch ? 'Web Search Enabled' : 'Enable Web Search'}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -654,11 +653,10 @@ export default function ChatWindow() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleSend()}
                 disabled={(!input.trim() && !attachedImage && !attachedPdf) || isStreaming || isUploadingPdf}
-                className={`p-2.5 rounded-lg transition-all duration-200 ${
-                  (input.trim() || attachedImage || attachedPdf) && !isStreaming && !isUploadingPdf
+                className={`p-2.5 rounded-lg transition-all duration-200 ${(input.trim() || attachedImage || attachedPdf) && !isStreaming && !isUploadingPdf
                     ? 'bg-primary text-white hover:bg-primary-hover shadow-lg shadow-primary/25'
                     : 'bg-surface text-muted cursor-not-allowed'
-                }`}
+                  }`}
               >
                 {isStreaming ? (
                   <svg className="animate-spin-slow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -702,11 +700,10 @@ function SpeakerButton({ content }: { content: string }) {
   return (
     <button
       onClick={toggleSpeak}
-      className={`p-2 rounded-lg transition-colors ${
-        isSpeaking
+      className={`p-2 rounded-lg transition-colors ${isSpeaking
           ? 'bg-primary/20 text-primary'
           : 'hover:bg-surface-hover text-muted-foreground hover:text-foreground'
-      }`}
+        }`}
       title={isSpeaking ? 'Stop reading' : 'Read aloud'}
     >
       {isSpeaking ? (
