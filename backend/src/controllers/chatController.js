@@ -534,16 +534,17 @@ ${existingMemories.map(m => `- ${m}`).join('\n') || 'None yet'}`,
           content: `User said: "${userMessage}"\nAssistant replied: "${assistantResponse.substring(0, 500)}"`,
         },
       ],
+      response_format: { type: "json_object" },
       temperature: 0.3,
     });
 
     let text = response.choices[0]?.message?.content?.trim();
     if (text) {
-      // Strip markdown code block if present
-      if (text.startsWith('```json')) {
-        text = text.replace(/^```json/, '').replace(/```$/, '').trim();
-      } else if (text.startsWith('```')) {
-        text = text.replace(/^```/, '').replace(/```$/, '').trim();
+      // Find the first { and last } to extract JSON even if there's preamble text
+      const firstBrace = text.indexOf('{');
+      const lastBrace = text.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace !== -1) {
+        text = text.substring(firstBrace, lastBrace + 1);
       }
 
       const parsed = JSON.parse(text);
