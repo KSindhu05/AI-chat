@@ -167,8 +167,8 @@ interface AppState {
   setSuggestions: (suggestions: string[]) => void;
 
   // Artifacts
-  activeArtifact: { messageId: string; index: number; language: string; content: string } | null;
-  setActiveArtifact: (artifact: { messageId: string; index: number; language: string; content: string } | null) => void;
+  activeArtifact: { messageId: string; index: number; language: string; content: string; title?: string } | null;
+  setActiveArtifact: (artifact: { messageId: string; index: number; language: string; content: string; title?: string } | null) => void;
   updateActiveArtifactContent: (content: string) => void;
 }
 
