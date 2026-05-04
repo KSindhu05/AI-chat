@@ -38,10 +38,11 @@ export default function ChatWindow() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pdfInputRef = useRef<HTMLInputElement>(null);
   const isUserScrolledUpRef = useRef(false);
+  const isUserInteractingRef = useRef(false);
 
   // Auto-scroll to bottom when messages change (use instant during streaming to avoid jank)
   useEffect(() => {
-    if (isUserScrolledUpRef.current) return;
+    if (isUserScrolledUpRef.current || isUserInteractingRef.current) return;
     if (isStreaming) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
     } else {
@@ -52,7 +53,7 @@ export default function ChatWindow() {
   // Only auto-scroll for streaming content every ~150ms to reduce reflow
   const lastStreamScrollRef = useRef(0);
   useEffect(() => {
-    if (!streamingContent || isUserScrolledUpRef.current) return;
+    if (!streamingContent || isUserScrolledUpRef.current || isUserInteractingRef.current) return;
     const now = Date.now();
     if (now - lastStreamScrollRef.current > 150) {
       lastStreamScrollRef.current = now;
@@ -70,7 +71,7 @@ export default function ChatWindow() {
         ticking = true;
         requestAnimationFrame(() => {
           const distFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-          const isScrolledUp = distFromBottom > 200;
+          const isScrolledUp = distFromBottom > 50;
           setShowScrollBtn(isScrolledUp);
           isUserScrolledUpRef.current = isScrolledUp;
           ticking = false;
@@ -360,7 +361,17 @@ export default function ChatWindow() {
       </div>
 
       {/* Messages Area */}
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-4 py-6 hide-on-print relative" style={{ WebkitOverflowScrolling: 'touch', ...(showExportMenu ? { display: 'none' } : {}) }}>
+      <div 
+        ref={scrollContainerRef} 
+        className="flex-1 overflow-y-auto px-4 py-6 hide-on-print relative" 
+        style={{ WebkitOverflowScrolling: 'touch', ...(showExportMenu ? { display: 'none' } : {}) }}
+        onTouchStart={() => { isUserInteractingRef.current = true; }}
+        onTouchEnd={() => { setTimeout(() => { isUserInteractingRef.current = false; }, 200); }}
+        onWheel={() => { 
+          isUserInteractingRef.current = true; 
+          setTimeout(() => { isUserInteractingRef.current = false; }, 200); 
+        }}
+      >
         <div className="max-w-3xl mx-auto space-y-4">
           {!hasMessages ? (
             /* Welcome Screen */
