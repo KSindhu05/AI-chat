@@ -309,6 +309,11 @@ exports.sendMessage = async (req, res) => {
         systemPrompt += `\n\nIMPORTANT: The user explicitly requested a web search to get real-time info, but the search engine blocked the request (Network Error). Please inform the user that your "Web Search" is currently experiencing a temporary network issue and answer to the best of your internal knowledge.`;
       }
     }
+
+    // Dynamic strict rule for very short questions
+    if (content && content.trim().split(/\\s+/).length <= 3) {
+      systemPrompt += `\n\nCRITICAL FINAL INSTRUCTION: The user's message is extremely short ("${content.trim()}"). You MUST reply with a MAXIMUM OF ONE SENTENCE or A SINGLE WORD. Do NOT write an essay. Do NOT use markdown headers or lists. Keep it incredibly brief and direct.`;
+    }
     
     const groqMessages = [
       { role: 'system', content: systemPrompt },
