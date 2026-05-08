@@ -11,11 +11,12 @@
 
 'use client';
 
-import { useState, memo } from 'react';
+import { useState, useEffect, memo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { useAppStore } from '@/store/chatStore';
 
 interface MessageBubbleProps {
   messageId: string;
@@ -356,8 +357,7 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
   );
 }
 
-import { useAppStore } from '@/store/chatStore';
-import { useEffect } from 'react';
+
 
 function ArtifactCard({ messageId, index, language, code, isStreaming }: any) {
   const { activeArtifact, setActiveArtifact, updateActiveArtifactContent } = useAppStore();

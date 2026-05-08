@@ -111,9 +111,24 @@ export const chatApi = {
 
       let buffer = '';
 
+      let tokenBuffer = '';
+      let updateTimeout: any = null;
+
+      const flushBuffer = () => {
+        if (tokenBuffer) {
+          onToken(tokenBuffer);
+          tokenBuffer = '';
+        }
+        updateTimeout = null;
+      };
+
       while (true) {
         const { done, value } = await reader.read();
-        if (done) break;
+        if (done) {
+          if (updateTimeout) clearTimeout(updateTimeout);
+          flushBuffer();
+          break;
+        }
 
         buffer += decoder.decode(value, { stream: true });
 
@@ -126,9 +141,14 @@ export const chatApi = {
             try {
               const data = JSON.parse(line.slice(6));
               if (data.token) {
-                onToken(data.token);
+                tokenBuffer += data.token;
+                if (!updateTimeout) {
+                  updateTimeout = setTimeout(flushBuffer, 32); // Batch updates to ~30fps
+                }
               }
               if (data.done) {
+                if (updateTimeout) clearTimeout(updateTimeout);
+                flushBuffer();
                 onDone({
                   messageId: data.messageId,
                   suggestions: data.suggestions || [],

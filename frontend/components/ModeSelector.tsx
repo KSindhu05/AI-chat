@@ -41,7 +41,7 @@ export default function ModeSelector() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-full mt-2 left-0 z-50 w-64 rounded-xl bg-surface border border-border shadow-xl shadow-black/20 overflow-hidden"
+            className="absolute top-full mt-2 right-0 z-50 w-64 rounded-xl bg-surface border border-border shadow-xl shadow-black/20 overflow-hidden"
           >
             {(Object.entries(CHAT_MODES) as [ChatMode, typeof current][]).map(([key, mode]) => (
               <button

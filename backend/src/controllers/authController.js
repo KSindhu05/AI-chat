@@ -59,6 +59,19 @@ exports.register = async (req, res) => {
     });
   } catch (err) {
     console.error('Register error:', err);
+    // Detect MongoDB connection/timeout errors
+    if (
+      err.name === 'MongooseError' ||
+      err.name === 'MongoServerError' ||
+      err.name === 'MongoNetworkError' ||
+      err.name === 'MongoTopologyClosedError' ||
+      err.message?.includes('buffering timed out') ||
+      err.message?.includes('topology was destroyed') ||
+      err.message?.includes('ECONNREFUSED') ||
+      err.message?.includes('Server selection timed out')
+    ) {
+      return res.status(503).json({ error: 'Database is temporarily unavailable. Please try again in a moment.' });
+    }
     res.status(500).json({ error: 'Server error during registration.' });
   }
 };
@@ -99,6 +112,19 @@ exports.login = async (req, res) => {
     });
   } catch (err) {
     console.error('Login error:', err);
+    // Detect MongoDB connection/timeout errors
+    if (
+      err.name === 'MongooseError' ||
+      err.name === 'MongoServerError' ||
+      err.name === 'MongoNetworkError' ||
+      err.name === 'MongoTopologyClosedError' ||
+      err.message?.includes('buffering timed out') ||
+      err.message?.includes('topology was destroyed') ||
+      err.message?.includes('ECONNREFUSED') ||
+      err.message?.includes('Server selection timed out')
+    ) {
+      return res.status(503).json({ error: 'Database is temporarily unavailable. Please try again in a moment.' });
+    }
     res.status(500).json({ error: 'Server error during login.' });
   }
 };

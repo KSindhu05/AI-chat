@@ -5,7 +5,7 @@
  * Uses a cache-first strategy for static assets and network-first for API calls.
  */
 
-const CACHE_NAME = 'nova-ai-v1';
+const CACHE_NAME = 'sin-ai-v2';
 const STATIC_ASSETS = [
   '/ai-logo.png',
   '/manifest.json',

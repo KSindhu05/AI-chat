@@ -138,9 +138,9 @@ export default function Sidebar() {
             <div className="p-4 border-b border-border">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-black">
-                  <img src="/ai-logo.png" alt="Nova AI Logo" className="w-full h-full object-cover" />
+                  <img src="/ai-logo.png" alt="SIN AI Logo" className="w-full h-full object-cover" />
                 </div>
-                <h1 className="text-lg font-semibold font-[Outfit] tracking-wide text-foreground">NOVA AI</h1>
+                <h1 className="text-lg font-semibold font-[Outfit] tracking-wide text-foreground">SIN AI</h1>
                 <button
                   onClick={toggleSidebar}
                   className="ml-auto p-1.5 rounded-lg hover:bg-surface-hover transition-colors lg:hidden"
@@ -266,8 +266,18 @@ export default function Sidebar() {
 
             {/* Footer — Theme toggle + User */}
             <div className="p-3 border-t border-border space-y-2">
-
-
+              <button
+                onClick={() => useAppStore.getState().toggleTheme()}
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-surface-hover transition-colors text-sm font-medium"
+              >
+                <div className="flex items-center gap-2 text-foreground">
+                  {useAppStore.getState().theme === 'dark' ? '🌙' : '☀️'}
+                  <span>{useAppStore.getState().theme === 'dark' ? 'Dark Mode' : 'Light Mode'}</span>
+                </div>
+                <div className="w-8 h-4 rounded-full bg-border relative transition-colors" style={{ backgroundColor: useAppStore.getState().theme === 'dark' ? 'var(--primary)' : 'var(--border-color)' }}>
+                  <div className={`absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-white transition-transform ${useAppStore.getState().theme === 'dark' ? 'translate-x-4' : ''}`} />
+                </div>
+              </button>
               {/* User profile */}
               {user && (
                 <div className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors">

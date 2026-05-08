@@ -1,6 +1,6 @@
 {
-  "name": "Nova AI",
-  "short_name": "Nova AI",
+  "name": "SIN AI",
+  "short_name": "SIN AI",
   "description": "AI-Powered Chat Assistant with multiple modes, voice input, and streaming responses.",
   "start_url": "/",
   "display": "standalone",

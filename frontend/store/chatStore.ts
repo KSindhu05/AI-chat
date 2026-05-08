@@ -217,16 +217,38 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ accentColor: color });
   },
   toggleTheme: () => {
-    // Disabled
+    set((state) => {
+      const newTheme = state.theme === 'light' ? 'dark' : 'light';
+      if (newTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      } else {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+      }
+      try {
+        localStorage.setItem('theme', newTheme);
+      } catch (e) {}
+      return { theme: newTheme };
+    });
   },
   loadTheme: () => {
     if (typeof window === 'undefined') return;
     try {
       const accent = localStorage.getItem('accentColor') || 'purple';
-      // Force light theme
-      document.documentElement.classList.add('light');
+      const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' || 'light';
+      
       document.documentElement.setAttribute('data-accent', accent);
-      set({ theme: 'light', accentColor: accent });
+      
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      } else {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+      }
+      
+      set({ theme: savedTheme, accentColor: accent });
     } catch (err) {
       console.error('Theme storage error:', err);
       set({ theme: 'light', accentColor: 'purple' });

@@ -42,15 +42,32 @@ export default function ChatWindow() {
   const isUserInteractingRef = useRef(false);
 
   // Auto-scroll to bottom when a new message is fully added
+  const prevIsStreamingRef = useRef(isStreaming);
+
   useEffect(() => {
-    if (isUserScrolledUpRef.current || isUserInteractingRef.current) return;
-    if (!isStreaming) {
+    const justFinishedStreaming = prevIsStreamingRef.current && !isStreaming;
+    prevIsStreamingRef.current = isStreaming;
+
+    if (justFinishedStreaming) {
+      // Force scroll to bottom when generation completes
+      isUserScrolledUpRef.current = false;
       setTimeout(() => {
         const el = scrollContainerRef.current;
         if (el) {
           el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
         }
       }, 100);
+    } else {
+      // Normal auto-scroll behavior
+      if (isUserScrolledUpRef.current || isUserInteractingRef.current) return;
+      if (!isStreaming) {
+        setTimeout(() => {
+          const el = scrollContainerRef.current;
+          if (el) {
+            el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+          }
+        }, 100);
+      }
     }
   }, [messages, isStreaming]);
 
@@ -335,7 +352,7 @@ export default function ChatWindow() {
   }, [user]);
 
   return (
-    <div className="flex-1 flex flex-col h-screen">
+    <div className="flex-1 flex flex-col h-full">
       <div className="flex-shrink-0 h-14 flex items-center px-4 gap-3 bg-background">
         <button
           onClick={() => useAppStore.getState().toggleSidebar()}
@@ -475,7 +492,7 @@ export default function ChatWindow() {
                 />
               )}
 
-              {/* Typing indicator — "Nova AI is thinking..." */}
+              {/* Typing indicator — "SIN AI is thinking..." */}
               {isStreaming && !streamingContent && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -496,7 +513,7 @@ export default function ChatWindow() {
                         <span className="typing-dot w-2 h-2 rounded-full bg-primary" />
                         <span className="typing-dot w-2 h-2 rounded-full bg-primary" />
                       </div>
-                      <span className="text-xs text-muted-foreground ml-1">Nova AI is thinking...</span>
+                      <span className="text-xs text-muted-foreground ml-1">Thinking...</span>
                     </div>
                   </div>
                 </motion.div>

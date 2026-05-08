@@ -58,7 +58,7 @@ export default function HomePage() {
           </div>
 
           <h1 className="text-4xl font-bold font-[Outfit] mb-2 tracking-wide text-foreground">
-            NOVA AI
+            SIN AI
           </h1>
           <p className="text-muted-foreground mb-8">AI-Powered Chat Assistant</p>
 
@@ -77,7 +77,7 @@ export default function HomePage() {
 
   // Authenticated — render the full chat UI
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-background">
+    <div className="flex h-[100dvh] w-screen overflow-hidden bg-background">
       {/* Sidebar overlay on mobile */}
       {sidebarOpen && (
         <div
